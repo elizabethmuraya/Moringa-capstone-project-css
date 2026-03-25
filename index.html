@@ -1,0 +1,990 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Elizabeth Muthoni — Beginner's Toolkit: JavaScript & CSS</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;1,400&family=DM+Mono:wght@400;500&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet" />
+<style>
+  :root {
+    --ink: #0d0d0d;
+    --paper: #f5f0e8;
+    --cream: #ede8dc;
+    --rust: #c0420e;
+    --sage: #4a7c59;
+    --gold: #c9991a;
+    --muted: #7a7268;
+    --border: #ccc5b5;
+    --mono: 'DM Mono', monospace;
+    --serif: 'Playfair Display', Georgia, serif;
+    --sans: 'DM Sans', sans-serif;
+  }
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    background: var(--paper);
+    color: var(--ink);
+    font-family: var(--sans);
+    font-weight: 300;
+    line-height: 1.7;
+    overflow-x: hidden;
+  }
+
+  /* ─── NOISE TEXTURE OVERLAY ─── */
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.04'/%3E%3C/svg%3E");
+    pointer-events: none;
+    z-index: 999;
+    opacity: 0.4;
+  }
+
+  /* ─── HEADER ─── */
+  header {
+    border-bottom: 2px solid var(--ink);
+    padding: 0 clamp(1.5rem, 6vw, 6rem);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    position: sticky;
+    top: 0;
+    background: var(--paper);
+    z-index: 100;
+    height: 64px;
+  }
+
+  .logo {
+    font-family: var(--serif);
+    font-size: 1.1rem;
+    font-style: italic;
+    color: var(--ink);
+    text-decoration: none;
+  }
+
+  nav {
+    display: flex;
+    gap: 2rem;
+    list-style: none;
+  }
+
+  nav a {
+    font-family: var(--mono);
+    font-size: 0.72rem;
+    text-transform: uppercase;
+    letter-spacing: 0.12em;
+    color: var(--muted);
+    text-decoration: none;
+    transition: color 0.2s;
+  }
+
+  nav a:hover { color: var(--rust); }
+
+  /* ─── HERO ─── */
+  .hero {
+    padding: clamp(4rem, 10vw, 9rem) clamp(1.5rem, 6vw, 6rem);
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 4rem;
+    align-items: end;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .hero-label {
+    font-family: var(--mono);
+    font-size: 0.7rem;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--rust);
+    margin-bottom: 1rem;
+    opacity: 0;
+    animation: fadeUp 0.7s ease forwards 0.1s;
+  }
+
+  .hero h1 {
+    font-family: var(--serif);
+    font-size: clamp(2.8rem, 6vw, 5.5rem);
+    line-height: 1.1;
+    font-weight: 700;
+    opacity: 0;
+    animation: fadeUp 0.7s ease forwards 0.25s;
+  }
+
+  .hero h1 em {
+    font-style: italic;
+    color: var(--rust);
+  }
+
+  .hero-sub {
+    font-size: 1.05rem;
+    color: var(--muted);
+    margin-top: 1.5rem;
+    max-width: 480px;
+    opacity: 0;
+    animation: fadeUp 0.7s ease forwards 0.4s;
+  }
+
+  .hero-meta {
+    display: flex;
+    flex-direction: column;
+    gap: 1.2rem;
+    opacity: 0;
+    animation: fadeUp 0.7s ease forwards 0.55s;
+  }
+
+  .meta-card {
+    background: var(--cream);
+    border: 1px solid var(--border);
+    padding: 1.2rem 1.5rem;
+    font-family: var(--mono);
+    font-size: 0.78rem;
+  }
+
+  .meta-card .label {
+    color: var(--muted);
+    font-size: 0.65rem;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    display: block;
+    margin-bottom: 0.3rem;
+  }
+
+  .meta-card .value {
+    color: var(--ink);
+    font-weight: 500;
+  }
+
+  .badge {
+    display: inline-block;
+    background: var(--rust);
+    color: white;
+    font-family: var(--mono);
+    font-size: 0.65rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    padding: 0.3rem 0.8rem;
+  }
+
+  /* ─── SECTION COMMON ─── */
+  section {
+    padding: clamp(3rem, 7vw, 7rem) clamp(1.5rem, 6vw, 6rem);
+    border-bottom: 1px solid var(--border);
+  }
+
+  .section-header {
+    display: flex;
+    align-items: baseline;
+    gap: 1.5rem;
+    margin-bottom: 3rem;
+  }
+
+  .section-num {
+    font-family: var(--mono);
+    font-size: 0.7rem;
+    color: var(--rust);
+    letter-spacing: 0.12em;
+  }
+
+  .section-title {
+    font-family: var(--serif);
+    font-size: clamp(1.6rem, 3vw, 2.5rem);
+    font-weight: 700;
+  }
+
+  /* ─── OVERVIEW ─── */
+  .overview-grid {
+    display: grid;
+    grid-template-columns: 2fr 1fr;
+    gap: 4rem;
+    align-items: start;
+  }
+
+  .overview-text p {
+    margin-bottom: 1.2rem;
+    font-size: 1rem;
+    max-width: 600px;
+  }
+
+  .tech-card {
+    background: var(--ink);
+    color: var(--paper);
+    padding: 2rem;
+  }
+
+  .tech-card h3 {
+    font-family: var(--serif);
+    font-size: 1.3rem;
+    margin-bottom: 1rem;
+    color: var(--gold);
+  }
+
+  .tech-card p {
+    font-size: 0.85rem;
+    color: #c8c2b8;
+    line-height: 1.6;
+    margin-bottom: 1rem;
+  }
+
+  .tech-uses {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.4rem;
+  }
+
+  .tag {
+    background: rgba(255,255,255,0.1);
+    color: #d0c9be;
+    font-family: var(--mono);
+    font-size: 0.62rem;
+    letter-spacing: 0.1em;
+    padding: 0.25rem 0.6rem;
+    text-transform: uppercase;
+  }
+
+  /* ─── SETUP ─── */
+  .steps-list {
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+  }
+
+  .step {
+    display: grid;
+    grid-template-columns: 3rem 1fr;
+    gap: 2rem;
+    padding: 2rem 0;
+    border-bottom: 1px solid var(--border);
+    opacity: 0;
+    transform: translateY(16px);
+    transition: opacity 0.5s ease, transform 0.5s ease;
+  }
+
+  .step.visible { opacity: 1; transform: translateY(0); }
+
+  .step-num {
+    font-family: var(--mono);
+    font-size: 2rem;
+    font-weight: 500;
+    color: var(--border);
+    line-height: 1;
+    padding-top: 0.2rem;
+  }
+
+  .step h3 {
+    font-family: var(--serif);
+    font-size: 1.2rem;
+    margin-bottom: 0.6rem;
+  }
+
+  .step p { font-size: 0.9rem; color: var(--muted); margin-bottom: 1rem; }
+
+  pre {
+    background: var(--ink);
+    color: #a8e6a3;
+    font-family: var(--mono);
+    font-size: 0.78rem;
+    padding: 1.2rem 1.5rem;
+    overflow-x: auto;
+    line-height: 1.6;
+    position: relative;
+  }
+
+  pre .comment { color: #5e7a5b; }
+  pre .kw { color: #7cb9e8; }
+  pre .str { color: #f0b27a; }
+  pre .fn { color: #d4a8f0; }
+
+  code {
+    font-family: var(--mono);
+    background: var(--cream);
+    border: 1px solid var(--border);
+    padding: 0.1rem 0.4rem;
+    font-size: 0.82em;
+    color: var(--rust);
+  }
+
+  /* ─── DEMO PROJECT ─── */
+  .demo-wrap {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 3rem;
+    align-items: start;
+  }
+
+  .demo-code { }
+
+  .demo-preview {
+    background: #1a1a2e;
+    padding: 2rem;
+    min-height: 320px;
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .demo-preview::before {
+    content: 'LIVE PREVIEW';
+    position: absolute;
+    top: 0.8rem;
+    right: 0.8rem;
+    font-family: var(--mono);
+    font-size: 0.55rem;
+    color: rgba(255,255,255,0.3);
+    letter-spacing: 0.15em;
+  }
+
+  .preview-title {
+    font-family: var(--serif);
+    font-size: 1.8rem;
+    font-style: italic;
+    color: #f0d080;
+    animation: shimmer 3s ease-in-out infinite;
+  }
+
+  @keyframes shimmer {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.7; }
+  }
+
+  .preview-card {
+    background: rgba(255,255,255,0.07);
+    border: 1px solid rgba(255,255,255,0.1);
+    padding: 1rem 1.2rem;
+    font-family: var(--mono);
+    font-size: 0.78rem;
+    color: #b0c8b0;
+    cursor: pointer;
+    transition: background 0.2s, transform 0.2s;
+  }
+
+  .preview-card:hover {
+    background: rgba(255,255,255,0.13);
+    transform: translateX(4px);
+  }
+
+  .preview-card .label { color: rgba(255,255,255,0.4); font-size: 0.6rem; letter-spacing: 0.1em; text-transform: uppercase; }
+
+  .preview-btn {
+    margin-top: auto;
+    background: #c0420e;
+    color: white;
+    border: none;
+    font-family: var(--mono);
+    font-size: 0.72rem;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    padding: 0.8rem 1.5rem;
+    cursor: pointer;
+    transition: background 0.2s;
+    width: fit-content;
+  }
+
+  .preview-btn:hover { background: #a03508; }
+
+  /* ─── AI PROMPT JOURNAL ─── */
+  .prompts-grid {
+    display: flex;
+    flex-direction: column;
+    gap: 2rem;
+  }
+
+  .prompt-entry {
+    border: 1px solid var(--border);
+    display: grid;
+    grid-template-columns: auto 1fr;
+    overflow: hidden;
+  }
+
+  .prompt-index {
+    background: var(--cream);
+    border-right: 1px solid var(--border);
+    padding: 1.5rem 1.2rem;
+    font-family: var(--mono);
+    font-size: 1.4rem;
+    font-weight: 500;
+    color: var(--border);
+    display: flex;
+    align-items: flex-start;
+    min-width: 4rem;
+    justify-content: center;
+  }
+
+  .prompt-body { padding: 1.5rem; }
+
+  .prompt-q {
+    font-family: var(--mono);
+    font-size: 0.82rem;
+    background: var(--ink);
+    color: #a8e6a3;
+    padding: 0.8rem 1rem;
+    margin-bottom: 1rem;
+    line-height: 1.5;
+  }
+
+  .prompt-q::before {
+    content: '> ';
+    color: var(--rust);
+  }
+
+  .prompt-body h4 {
+    font-family: var(--serif);
+    font-size: 1rem;
+    margin-bottom: 0.5rem;
+  }
+
+  .prompt-body p { font-size: 0.88rem; color: var(--muted); margin-bottom: 0.8rem; }
+
+  .rating {
+    display: flex;
+    gap: 3px;
+  }
+
+  .star { color: var(--gold); font-size: 0.9rem; }
+  .star.empty { color: var(--border); }
+
+  /* ─── ERRORS & FIXES ─── */
+  .errors-list { display: flex; flex-direction: column; gap: 1.5rem; }
+
+  .error-item {
+    border-left: 3px solid var(--rust);
+    padding-left: 1.5rem;
+  }
+
+  .error-item h4 {
+    font-family: var(--mono);
+    font-size: 0.82rem;
+    color: var(--rust);
+    margin-bottom: 0.4rem;
+  }
+
+  .error-item p { font-size: 0.88rem; color: var(--muted); }
+
+  .fix-label {
+    font-family: var(--mono);
+    font-size: 0.62rem;
+    text-transform: uppercase;
+    letter-spacing: 0.12em;
+    color: var(--sage);
+    margin-top: 0.6rem;
+    display: block;
+  }
+
+  /* ─── REFERENCES ─── */
+  .refs-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+    gap: 1.5rem;
+  }
+
+  .ref-card {
+    background: var(--cream);
+    border: 1px solid var(--border);
+    padding: 1.3rem;
+    text-decoration: none;
+    color: var(--ink);
+    transition: border-color 0.2s, transform 0.2s;
+    display: block;
+  }
+
+  .ref-card:hover {
+    border-color: var(--rust);
+    transform: translateY(-3px);
+  }
+
+  .ref-type {
+    font-family: var(--mono);
+    font-size: 0.6rem;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--rust);
+    margin-bottom: 0.5rem;
+  }
+
+  .ref-card h4 { font-family: var(--serif); font-size: 1rem; margin-bottom: 0.3rem; }
+  .ref-card p { font-size: 0.8rem; color: var(--muted); }
+
+  /* ─── FOOTER ─── */
+  footer {
+    padding: 3rem clamp(1.5rem, 6vw, 6rem);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    font-family: var(--mono);
+    font-size: 0.7rem;
+    color: var(--muted);
+  }
+
+  footer a { color: var(--rust); text-decoration: none; }
+
+  /* ─── ANIMATIONS ─── */
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  /* ─── RESPONSIVE ─── */
+  @media (max-width: 768px) {
+    .hero { grid-template-columns: 1fr; gap: 2rem; }
+    .overview-grid { grid-template-columns: 1fr; }
+    .demo-wrap { grid-template-columns: 1fr; }
+    .step { grid-template-columns: 2.5rem 1fr; gap: 1rem; }
+    nav { gap: 1.2rem; }
+  }
+</style>
+</head>
+<body>
+
+<!-- ═══ HEADER ═══ -->
+<header>
+  <a class="logo" href="#">Elizabeth Muthoni</a>
+  <nav>
+    <a href="#overview">Overview</a>
+    <a href="#setup">Setup</a>
+    <a href="#example">Example</a>
+    <a href="#prompts">Prompts</a>
+    <a href="#refs">References</a>
+  </nav>
+</header>
+
+<!-- ═══ HERO ═══ -->
+<section class="hero" id="top">
+  <div>
+    <p class="hero-label">Moringa AI Capstone · AIDV-PT09</p>
+    <h1>Prompt-Powered<br/>Kickstart:<br/><em>JavaScript</em> &amp; CSS</h1>
+    <p class="hero-sub">
+      A beginner-friendly toolkit for building interactive web interfaces using vanilla JavaScript and CSS — scaffolded with the help of generative AI.
+    </p>
+  </div>
+  <div class="hero-meta">
+    <div class="meta-card">
+      <span class="label">Author</span>
+      <span class="value">Elizabeth Muthoni</span>
+    </div>
+    <div class="meta-card">
+      <span class="label">Technology Chosen</span>
+      <span class="value">Vanilla JavaScript + CSS (Animations &amp; DOM)</span>
+    </div>
+    <div class="meta-card">
+      <span class="label">End Goal</span>
+      <span class="value">Render a styled, interactive UI component with JS-powered interactivity</span>
+    </div>
+    <div class="meta-card">
+      <span class="label">Course</span>
+      <span class="value">Beginner's Toolkit with GenAI</span>
+    </div>
+    <div style="margin-top: 0.5rem;">
+      <span class="badge">Capstone Project</span>
+    </div>
+  </div>
+</section>
+
+<!-- ═══ 1. OVERVIEW ═══ -->
+<section id="overview">
+  <div class="section-header">
+    <span class="section-num">01</span>
+    <h2 class="section-title">Overview &amp; Technology Summary</h2>
+  </div>
+  <div class="overview-grid">
+    <div class="overview-text">
+      <p><strong>Why JavaScript &amp; CSS?</strong> I chose vanilla JavaScript and CSS because they are the foundational building blocks of every website. Before reaching for React or Vue, understanding what happens natively in the browser gives you real control over what you're building.</p>
+      <p>JavaScript is a high-level, interpreted programming language that enables dynamic behaviour in web pages — responding to clicks, updating content without a page reload, animating elements, and communicating with APIs. It runs directly in the browser with zero installation.</p>
+      <p>CSS (Cascading Style Sheets) controls presentation: layout, colour, spacing, typography and — crucially — animations. Together, JS + CSS form the minimum viable toolkit for a compelling web experience.</p>
+      <p><strong>End Goal:</strong> Build an interactive card dashboard component that responds to user input, animates in on load, and demonstrates DOM manipulation — all with zero frameworks.</p>
+    </div>
+    <div>
+      <div class="tech-card">
+        <h3>Quick Facts</h3>
+        <p>JavaScript was created in 1995 by Brendan Eich and standardised as ECMAScript. CSS was proposed by Håkon Wium Lie in 1994. Both are maintained under W3C/ECMA standards.</p>
+        <div class="tech-uses">
+          <span class="tag">Browser Native</span>
+          <span class="tag">No Compiler</span>
+          <span class="tag">DOM Manipulation</span>
+          <span class="tag">Animations</span>
+          <span class="tag">Event Handling</span>
+          <span class="tag">Responsive UI</span>
+          <span class="tag">Zero Dependencies</span>
+        </div>
+      </div>
+
+      <div style="margin-top:1.5rem; padding: 1.5rem; background: var(--cream); border: 1px solid var(--border);">
+        <p style="font-family: var(--mono); font-size:0.72rem; color: var(--muted); margin-bottom:0.5rem; text-transform:uppercase; letter-spacing:0.1em;">Real-world use</p>
+        <p style="font-size: 0.9rem;">Google Docs uses vanilla JS extensively for the editor. Twitter's first UI was plain JS + CSS before React was invented. GitHub's page interactions are largely CSS-driven.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══ 2. SYSTEM REQUIREMENTS ═══ -->
+<section id="requirements">
+  <div class="section-header">
+    <span class="section-num">02</span>
+    <h2 class="section-title">System Requirements</h2>
+  </div>
+  <div style="display:grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap:1.5rem;">
+    <div class="meta-card">
+      <span class="label">Operating System</span>
+      <span class="value">Windows 10/11 · macOS 12+ · Ubuntu 20+</span>
+    </div>
+    <div class="meta-card">
+      <span class="label">Code Editor</span>
+      <span class="value">VS Code (recommended) or any text editor</span>
+    </div>
+    <div class="meta-card">
+      <span class="label">Browser</span>
+      <span class="value">Chrome 90+ · Firefox 88+ · Edge 90+</span>
+    </div>
+    <div class="meta-card">
+      <span class="label">Extensions (optional)</span>
+      <span class="value">Live Server (VS Code), Prettier</span>
+    </div>
+    <div class="meta-card">
+      <span class="label">Packages Required</span>
+      <span class="value">None — zero npm/pip dependencies</span>
+    </div>
+    <div class="meta-card">
+      <span class="label">Internet</span>
+      <span class="value">Only for loading Google Fonts (optional)</span>
+    </div>
+  </div>
+</section>
+
+<!-- ═══ 3. SETUP ═══ -->
+<section id="setup">
+  <div class="section-header">
+    <span class="section-num">03</span>
+    <h2 class="section-title">Installation &amp; Setup</h2>
+  </div>
+  <div class="steps-list">
+
+    <div class="step">
+      <div class="step-num">01</div>
+      <div>
+        <h3>Install VS Code</h3>
+        <p>Download and install Visual Studio Code from <code>code.visualstudio.com</code>. It's free and available on all platforms.</p>
+      </div>
+    </div>
+
+    <div class="step">
+      <div class="step-num">02</div>
+      <div>
+        <h3>Install the Live Server Extension</h3>
+        <p>In VS Code, open Extensions (Ctrl+Shift+X), search <strong>Live Server</strong> by Ritwick Dey, and click Install. This lets you see changes instantly.</p>
+      </div>
+    </div>
+
+    <div class="step">
+      <div class="step-num">03</div>
+      <div>
+        <h3>Create Your Project Folder</h3>
+        <p>Create a new folder called <code>js-css-toolkit</code> and open it in VS Code via File → Open Folder.</p>
+        <pre><span class="comment"># In your terminal (optional)</span>
+mkdir js-css-toolkit
+cd js-css-toolkit
+code .</pre>
+      </div>
+    </div>
+
+    <div class="step">
+      <div class="step-num">04</div>
+      <div>
+        <h3>Create Your Three Files</h3>
+        <p>Inside the folder, create these files:</p>
+        <pre>js-css-toolkit/
+├── index.html     <span class="comment">← Your HTML structure</span>
+├── style.css      <span class="comment">← Your styles &amp; animations</span>
+└── app.js         <span class="comment">← Your JavaScript logic</span></pre>
+      </div>
+    </div>
+
+    <div class="step">
+      <div class="step-num">05</div>
+      <div>
+        <h3>Link CSS &amp; JS in HTML</h3>
+        <p>In your <code>index.html</code>, add the following boilerplate inside <code>&lt;head&gt;</code> and before <code>&lt;/body&gt;</code>:</p>
+        <pre><span class="comment">&lt;!-- Inside &lt;head&gt; --&gt;</span>
+&lt;<span class="kw">link</span> rel=<span class="str">"stylesheet"</span> href=<span class="str">"style.css"</span>&gt;
+
+<span class="comment">&lt;!-- Before &lt;/body&gt; --&gt;</span>
+&lt;<span class="kw">script</span> src=<span class="str">"app.js"</span>&gt;&lt;/<span class="kw">script</span>&gt;</pre>
+      </div>
+    </div>
+
+    <div class="step">
+      <div class="step-num">06</div>
+      <div>
+        <h3>Launch Live Server</h3>
+        <p>Right-click on <code>index.html</code> in VS Code and choose <strong>Open with Live Server</strong>. Your browser will open at <code>http://127.0.0.1:5500</code> and refresh on every save.</p>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<!-- ═══ 4. MINIMAL WORKING EXAMPLE ═══ -->
+<section id="example">
+  <div class="section-header">
+    <span class="section-num">04</span>
+    <h2 class="section-title">Minimal Working Example</h2>
+  </div>
+
+  <p style="margin-bottom: 2rem; max-width:600px; color: var(--muted);">This example builds an interactive card component: cards fade in on page load, and a button adds a new card dynamically — all in under 50 lines of code.</p>
+
+  <div class="demo-wrap">
+    <div class="demo-code">
+      <p style="font-family:var(--mono); font-size:0.65rem; text-transform:uppercase; letter-spacing:0.12em; color:var(--muted); margin-bottom:0.6rem;">style.css</p>
+      <pre><span class="comment">/* Fade-in animation */</span>
+@<span class="kw">keyframes</span> fadeIn {
+  from { opacity: 0; transform: translateY(20px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+.<span class="fn">card</span> {
+  background: white;
+  border: 1px solid #ddd;
+  padding: 1.2rem;
+  margin-bottom: 1rem;
+  animation: <span class="fn">fadeIn</span> 0.5s ease forwards;
+  opacity: 0; <span class="comment">/* starts hidden */</span>
+}
+
+.<span class="fn">card</span>:nth-child(1) { animation-delay: 0.1s; }
+.<span class="fn">card</span>:nth-child(2) { animation-delay: 0.25s; }
+.<span class="fn">card</span>:nth-child(3) { animation-delay: 0.4s; }</pre>
+
+      <p style="font-family:var(--mono); font-size:0.65rem; text-transform:uppercase; letter-spacing:0.12em; color:var(--muted); margin-bottom:0.6rem; margin-top:1.2rem;">app.js</p>
+      <pre><span class="comment">// Select the container &amp; button</span>
+<span class="kw">const</span> container = document.<span class="fn">querySelector</span>(<span class="str">'#card-list'</span>);
+<span class="kw">const</span> btn = document.<span class="fn">querySelector</span>(<span class="str">'#add-btn'</span>);
+<span class="kw">let</span> count = 3;
+
+<span class="comment">// Add a new card on button click</span>
+btn.<span class="fn">addEventListener</span>(<span class="str">'click'</span>, () =&gt; {
+  count++;
+  <span class="kw">const</span> card = document.<span class="fn">createElement</span>(<span class="str">'div'</span>);
+  card.className = <span class="str">'card'</span>;
+  card.textContent = <span class="str">`Card #${count} — dynamically added`</span>;
+  container.<span class="fn">appendChild</span>(card);
+
+  <span class="comment">// Reset animation so new card fades in</span>
+  card.style.animation = <span class="str">'none'</span>;
+  card.offsetHeight; <span class="comment">// trigger reflow</span>
+  card.style.animation = <span class="str">''</span>;
+});</pre>
+    </div>
+
+    <div>
+      <p style="font-family:var(--mono); font-size:0.65rem; text-transform:uppercase; letter-spacing:0.12em; color:var(--muted); margin-bottom:0.6rem;">Expected Output</p>
+      <div class="demo-preview" id="liveDemo">
+        <div class="preview-title">My Dashboard</div>
+        <div class="preview-card" id="c1">
+          <div class="label">Card 1</div>
+          JavaScript powers this card's fade-in animation
+        </div>
+        <div class="preview-card" id="c2">
+          <div class="label">Card 2</div>
+          CSS animation-delay creates a stagger effect
+        </div>
+        <div class="preview-card" id="c3">
+          <div class="label">Card 3</div>
+          Each card gets its own delay for visual rhythm
+        </div>
+        <button class="preview-btn" onclick="addCard()">+ Add Card</button>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══ 5. AI PROMPT JOURNAL ═══ -->
+<section id="prompts">
+  <div class="section-header">
+    <span class="section-num">05</span>
+    <h2 class="section-title">AI Prompt Journal</h2>
+  </div>
+  <div class="prompts-grid">
+
+    <div class="prompt-entry">
+      <div class="prompt-index">1</div>
+      <div class="prompt-body">
+        <div class="prompt-q">Give me a step-by-step guide to start a vanilla JavaScript + CSS project from scratch with no frameworks</div>
+        <h4>AI Response Summary</h4>
+        <p>The AI walked me through creating the three-file structure (HTML, CSS, JS), explained how <code>&lt;link&gt;</code> and <code>&lt;script&gt;</code> tags work, and recommended installing Live Server. It also clarified the difference between placing a <code>&lt;script&gt;</code> in <code>&lt;head&gt;</code> vs before <code>&lt;/body&gt;</code>.</p>
+        <p><strong>Evaluation:</strong> Extremely helpful as a first prompt. Gave me a complete scaffold and explained the reasoning behind each step, not just the commands.</p>
+        <div class="rating"><span class="star">★</span><span class="star">★</span><span class="star">★</span><span class="star">★</span><span class="star">★</span></div>
+      </div>
+    </div>
+
+    <div class="prompt-entry">
+      <div class="prompt-index">2</div>
+      <div class="prompt-body">
+        <div class="prompt-q">How do I create a CSS fade-in animation that staggers across multiple cards? Show me an example with keyframes and animation-delay</div>
+        <h4>AI Response Summary</h4>
+        <p>The AI provided a clear example using <code>@keyframes fadeIn</code>, showed how <code>opacity: 0</code> is required as the base state, and explained why each <code>:nth-child</code> selector needs an incrementally larger <code>animation-delay</code>. It also warned me about the <code>animation-fill-mode: forwards</code> gotcha.</p>
+        <p><strong>Evaluation:</strong> Saved significant trial-and-error time. The explanation of <code>opacity: 0</code> on the element itself (not just in keyframes) was a key insight I wouldn't have found easily.</p>
+        <div class="rating"><span class="star">★</span><span class="star">★</span><span class="star">★</span><span class="star">★</span><span class="star">★</span></div>
+      </div>
+    </div>
+
+    <div class="prompt-entry">
+      <div class="prompt-index">3</div>
+      <div class="prompt-body">
+        <div class="prompt-q">How do I dynamically create a new HTML element with JavaScript and make it animate in the same way as the existing elements?</div>
+        <h4>AI Response Summary</h4>
+        <p>The AI explained <code>document.createElement</code>, <code>appendChild</code>, and critically — the reflow trick (<code>element.offsetHeight</code>) needed to re-trigger a CSS animation on a programmatically added element. Without this tip, newly added cards would not animate.</p>
+        <p><strong>Evaluation:</strong> The reflow trick is non-obvious and not well-documented for beginners. AI was more useful here than a standard Google search. Productivity gain was significant.</p>
+        <div class="rating"><span class="star">★</span><span class="star">★</span><span class="star">★</span><span class="star">★</span><span class="star empty">★</span></div>
+      </div>
+    </div>
+
+    <div class="prompt-entry">
+      <div class="prompt-index">4</div>
+      <div class="prompt-body">
+        <div class="prompt-q">What are the most common beginner mistakes in CSS animations and how do I avoid them?</div>
+        <h4>AI Response Summary</h4>
+        <p>The AI listed key pitfalls: forgetting <code>animation-fill-mode: forwards</code>, animating properties that trigger layout reflow (like <code>width</code> vs <code>transform</code>), and not using <code>will-change</code> for performance-heavy animations. It recommended sticking to <code>opacity</code> and <code>transform</code> for smooth 60fps.</p>
+        <p><strong>Evaluation:</strong> Good reference material. Helped me write better CSS from the start rather than debugging performance problems later.</p>
+        <div class="rating"><span class="star">★</span><span class="star">★</span><span class="star">★</span><span class="star">★</span><span class="star empty">★</span></div>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<!-- ═══ 6. COMMON ERRORS ═══ -->
+<section id="errors">
+  <div class="section-header">
+    <span class="section-num">06</span>
+    <h2 class="section-title">Common Errors &amp; Fixes</h2>
+  </div>
+  <div class="errors-list">
+
+    <div class="error-item">
+      <h4>ERROR: Cannot read properties of null (reading 'addEventListener')</h4>
+      <p>This happens when the <code>&lt;script&gt;</code> tag is in <code>&lt;head&gt;</code> and runs before the HTML has loaded, so <code>document.querySelector</code> returns <code>null</code>.</p>
+      <span class="fix-label">✓ Fix</span>
+      <p>Move the <code>&lt;script&gt;</code> tag to just before <code>&lt;/body&gt;</code>, or wrap your code in <code>document.addEventListener('DOMContentLoaded', () =&gt; { ... })</code>.</p>
+    </div>
+
+    <div class="error-item">
+      <h4>CSS animation plays once then element disappears</h4>
+      <p>The animation ends but the element reverts to its initial state (opacity: 0) because <code>animation-fill-mode</code> is not set.</p>
+      <span class="fix-label">✓ Fix</span>
+      <p>Add <code>animation-fill-mode: forwards</code> (or use the shorthand <code>animation: fadeIn 0.5s ease <strong>forwards</strong></code>). This keeps the final keyframe state.</p>
+    </div>
+
+    <div class="error-item">
+      <h4>Dynamically added card does not animate</h4>
+      <p>Resetting the animation class alone does not re-trigger CSS animations because the browser batches style changes.</p>
+      <span class="fix-label">✓ Fix</span>
+      <p>Force a reflow between removing and re-adding the animation: <code>card.style.animation = 'none'; card.offsetHeight; card.style.animation = '';</code> — reading <code>offsetHeight</code> forces the browser to flush styles.</p>
+    </div>
+
+    <div class="error-item">
+      <h4>Live Server not reflecting changes</h4>
+      <p>Sometimes the browser cache serves the old file even after you save.</p>
+      <span class="fix-label">✓ Fix</span>
+      <p>Hard-refresh the browser with <strong>Ctrl+Shift+R</strong> (Windows) or <strong>Cmd+Shift+R</strong> (Mac). If that fails, disable browser cache in DevTools (Network tab → Disable cache, keep DevTools open).</p>
+    </div>
+
+    <div class="error-item">
+      <h4>Fonts not loading from Google Fonts</h4>
+      <p>The <code>&lt;link&gt;</code> to Google Fonts must appear <em>before</em> your stylesheet, and you need an internet connection.</p>
+      <span class="fix-label">✓ Fix</span>
+      <p>Place the Google Fonts <code>&lt;link&gt;</code> as the first <code>&lt;link&gt;</code> in your <code>&lt;head&gt;</code>. For offline use, download the font files and host them locally.</p>
+    </div>
+
+  </div>
+</section>
+
+<!-- ═══ 7. REFERENCES ═══ -->
+<section id="refs">
+  <div class="section-header">
+    <span class="section-num">07</span>
+    <h2 class="section-title">References</h2>
+  </div>
+  <div class="refs-grid">
+    <a class="ref-card" href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Guide" target="_blank">
+      <div class="ref-type">📚 Official Docs</div>
+      <h4>MDN JavaScript Guide</h4>
+      <p>The authoritative reference for all JavaScript features, APIs and best practices. developer.mozilla.org</p>
+    </a>
+    <a class="ref-card" href="https://developer.mozilla.org/en-US/docs/Web/CSS/CSS_animations" target="_blank">
+      <div class="ref-type">📚 Official Docs</div>
+      <h4>MDN CSS Animations</h4>
+      <p>Complete reference for keyframes, timing functions, fill-mode and animation properties.</p>
+    </a>
+    <a class="ref-card" href="https://javascript.info" target="_blank">
+      <div class="ref-type">📖 Tutorial</div>
+      <h4>javascript.info</h4>
+      <p>Modern, beginner-friendly JavaScript textbook. Covers everything from basics to advanced async patterns.</p>
+    </a>
+    <a class="ref-card" href="https://css-tricks.com/almanac/properties/a/animation/" target="_blank">
+      <div class="ref-type">📝 Blog</div>
+      <h4>CSS-Tricks: Animation Almanac</h4>
+      <p>Practical, example-rich guide to every CSS animation property with interactive demos.</p>
+    </a>
+    <a class="ref-card" href="https://web.dev/animations-guide/" target="_blank">
+      <div class="ref-type">🎯 Performance</div>
+      <h4>web.dev Animations Guide</h4>
+      <p>Google's guide on building smooth animations — explains GPU compositing and 60fps techniques.</p>
+    </a>
+    <a class="ref-card" href="https://www.youtube.com/watch?v=PFmuCDHHpwk" target="_blank">
+      <div class="ref-type">▶ Video</div>
+      <h4>Traversy Media: JS Crash Course</h4>
+      <p>Brad Traversy's 90-minute vanilla JS crash course — covers DOM, events and ES6 essentials.</p>
+    </a>
+  </div>
+</section>
+
+<!-- ═══ FOOTER ═══ -->
+<footer>
+  <span>Elizabeth Muthoni · Moringa AI Capstone · AIDV-PT09 · 2025</span>
+  <span>Built with JavaScript &amp; CSS · <a href="https://github.com" target="_blank">View on GitHub →</a></span>
+</footer>
+
+<!-- ═══ SCRIPTS ═══ -->
+<script>
+  // ── Intersection Observer for step animations ──
+  const steps = document.querySelectorAll('.step');
+  const obs = new IntersectionObserver((entries) => {
+    entries.forEach((e, i) => {
+      if (e.isIntersecting) {
+        setTimeout(() => e.target.classList.add('visible'), i * 80);
+      }
+    });
+  }, { threshold: 0.15 });
+  steps.forEach(s => obs.observe(s));
+
+  // ── Live Demo: Add Card ──
+  let cardCount = 3;
+  function addCard() {
+    cardCount++;
+    const demo = document.getElementById('liveDemo');
+    const btn = demo.querySelector('.preview-btn');
+    const card = document.createElement('div');
+    card.className = 'preview-card';
+    card.innerHTML = `<div class="label">Card ${cardCount}</div>Dynamically added via JavaScript DOM manipulation`;
+
+    // Insert before button
+    demo.insertBefore(card, btn);
+
+    // Re-trigger animation
+    card.style.animation = 'none';
+    card.offsetHeight;
+    card.style.animation = '';
+    card.style.opacity = '0';
+    card.style.transform = 'translateX(20px)';
+    card.style.transition = 'opacity 0.4s ease, transform 0.4s ease';
+    requestAnimationFrame(() => {
+      card.style.opacity = '1';
+      card.style.transform = 'translateX(0)';
+    });
+  }
+</script>
+</body>
+</html>
